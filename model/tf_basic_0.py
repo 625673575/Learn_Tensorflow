@@ -8,12 +8,8 @@ Created on Sun Mar 19 13:33:44 2017
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import tensorflow as tf
-import sklearn.datasets as datasets
-
-import sklearn.datasets as datasets
 
 sess = tf.Session()
-iris=datasets.load_iris()
 
 W = tf.Variable([.3], tf.float32)
 b = tf.Variable([-.3], tf.float32)
@@ -41,5 +37,10 @@ for i in range(999):
     
 # evaluate training accuracy
 curr_W, curr_b, curr_loss  = sess.run([W, b, loss], {x:x_train, y:y_train})
+plt.plot(x_train,y_train,'o')
+plt.plot(x_train,curr_W*x_train+curr_b,'-')
+plt.suptitle('Line Regression')
+plt.title( 'loss='+str( curr_loss))
+plt.show()
 print("W: %s b: %s loss: %s"%(curr_W, curr_b, curr_loss))
     
