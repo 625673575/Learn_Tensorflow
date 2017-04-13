@@ -98,17 +98,24 @@ def desaturate_test():
     plt.imshow(result)
     plt.show()
 
-def blend(image0,image1 ,alpha):
+def blend_alpha(image0, image1, alpha):
     return image0*alpha+image1*(1-alpha)
 
 def blend_test():
-    result=sess.run(blend(resize0, resize1, resize2))
+    result=sess.run(blend_alpha(resize0, resize1, resize2))
     ax1 = plt.subplot(121)
     plt.imshow(result)
     ax1 = plt.subplot(122)
-    result = sess.run(blend(resize0, resize1, tf.constant(0.8)))
+    result = sess.run(blend_alpha(resize0, resize1, tf.constant(0.8)))
     plt.imshow(result)
     plt.show()
 
-blend_test()
+def blend_lighter(image0, image1):
+    return tf.maximum(image0,image1)
+def blend_darker(image0, image1):
+    return tf.minimum(image0,image1)
+#blend_test()
 #blur_test()
+result=sess.run(blend_darker(resize0,resize1))
+plt.imshow(result)
+plt.show()
