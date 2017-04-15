@@ -6,6 +6,18 @@ from tensorflow.examples.tutorials.mnist import input_data
 
 model_file='./mnist_deep.ckpt'
 
+def variable_summaries(var):
+  """Attach a lot of summaries to a Tensor (for TensorBoard visualization)."""
+  with tf.name_scope('summaries'):
+    mean = tf.reduce_mean(var)
+    tf.summary.scalar('mean', mean)
+    with tf.name_scope('stddev'):
+      stddev = tf.sqrt(tf.reduce_mean(tf.square(var - mean)))
+    tf.summary.scalar('stddev', stddev)
+    tf.summary.scalar('max', tf.reduce_max(var))
+    tf.summary.scalar('min', tf.reduce_min(var))
+    tf.summary.histogram('histogram', var)
+
 def weight_variable(shape):
   initial = tf.truncated_normal(shape, stddev=0.1)
   return tf.Variable(initial)
@@ -77,9 +89,9 @@ def train():
 
 def eval():
     saver.restore(sess, model_file+'-2000')
-    px = mnist.test.images[23]
+    px = mnist.test.images[3]
     plt.imshow(np.reshape(px, [28, 28]))
-    npx = np.reshape(px, [1,784])
+    npx = np.reshape(px, [-1,784])
 
     logits = sess.run(y_conv, feed_dict={x: npx,keep_prob:1.0})
     pred =tf.arg_max(tf.nn.softmax(logits),1)
