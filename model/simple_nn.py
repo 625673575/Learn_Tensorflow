@@ -30,8 +30,6 @@ def devtanh(x):
 def basicNN(input, output):
     sess=tf.Session()
     w0 =tf.Variable((2 * tf.random_normal([3,1])) - 1,dtype=tf.float32)
-    l1 = tf.Variable(tf.random_normal([5,1]), dtype=tf.float32)
-    l1_delta = tf.Variable(tf.random_normal([5,1]), dtype=tf.float32)
     sess.run(tf.global_variables_initializer())
 
     l1 = tf.sigmoid(tf.matmul(input, w0))
