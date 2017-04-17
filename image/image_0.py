@@ -1,7 +1,7 @@
-import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import numpy as np
+import datetime
 
 sess = tf.Session()
 reader = tf.WholeFileReader()
@@ -25,18 +25,34 @@ crop = tf.image.crop_to_bounding_box(resize0, 32, 32, 64, 64)
 
 
 # end process
-def desaturate(image, rw, gw, bw):
-    r, g, b = tf.split(image, num_or_size_splits=3, axis=2)
-    rx = r * rw + g * gw + b * bw
-    image = tf.concat([rx, rx, rx], 2)
-    return image
+def desaturate(image, rw, gw, bw,KeepDims=True, way=0):
+    if way==1:
+        r, g, b = tf.split(image, num_or_size_splits=3, axis=2)
+        image = r * rw + g * gw + b * bw #shape=(512, 512, 1)
 
+        if KeepDims==False:
+            return image
+        else:
+            return tf.concat([image, image, image], 2)
+
+    if way==0:
+        image=tf.reduce_sum(tf.multiply(image,[rw,gw,bw]),axis=2) #shape=(512, 512)
+
+        if KeepDims==False:
+            return image
+        else:
+            return tf.stack([image,image,image],axis=2)
+
+    if way==2:
+        shape=tf.shape(image)
+        image=tf.matmul(tf.reshape(image,[-1,3]),[[rw],[gw],[bw]])
+        image=tf.reshape(image,tf.gather(shape,[0,1]))
+        if KeepDims==False:
+            return image
+        else:
+            return tf.stack([image,image,image],axis=2)
 
 def shift_pos(image, axis, stride):
-    # contrast=tf.constant([[1,2,3],[4,5,6],[7,8,9]],dtype=tf.float32)
-    # nparray=session.run(image)
-    # nparray= np.roll(nparray,stride,axis)
-    # return tf.convert_to_tensor(nparray)
     shape = tf.shape(image)
     if axis == 0:
         if stride > 0:
@@ -116,6 +132,12 @@ def blend_darker(image0, image1):
     return tf.minimum(image0,image1)
 #blend_test()
 #blur_test()
-result=sess.run(blend_darker(resize0,resize1))
+#result=sess.run(blend_darker(resize0,resize1))
+begin=datetime.datetime.now()
+with tf.device('/gpu:0'):
+    result=sess.run(desaturate(resize0,0.2,0.59,0.21,way=0))
+end=datetime.datetime.now()
+print('经过的时间：', (begin-end).microseconds)
+
 plt.imshow(result)
 plt.show()

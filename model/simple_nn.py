@@ -33,9 +33,9 @@ def basicNN(input, output):
     sess.run(tf.global_variables_initializer())
 
     l1 = tf.sigmoid(tf.matmul(input, w0))
-    l1_delta =tf.multiply( tf.subtract(output,l1 ), devsigmoid(l1)*2)
+    l1_delta =tf.multiply( tf.subtract(output,l1 ), devsigmoid(l1))
     train=tf.assign_add( w0 ,tf.matmul(tf.transpose(input), l1_delta))
-    for i in range(1000):
+    for i in range(10000):
         sess.run(train)
 
     testinput = tf.constant([[1, 0, 0],
