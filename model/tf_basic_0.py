@@ -9,6 +9,34 @@ import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
+
+def threeAdd():
+    input =np.array( [[0, 0, 0],
+             [1, 0, 0],
+             [0, 1, 0],
+             [0, 0, 1],
+             [1, 1, 0],
+             [1, 0, 1],
+             [0, 1, 1],
+             [1, 1, 1]],dtype=np.float32)
+    output = np.sum(input*[1,8,4], axis=1)+2
+    print(input.shape,output)
+
+    x = tf.placeholder(tf.float32,name='x')
+    y = tf.placeholder(tf.float32,name='y')
+    w = tf.Variable([0.4,-0.5,2.4])
+    b=tf.Variable(0.427384)
+    sess = tf.InteractiveSession()
+
+    model =tf.reduce_sum(w*x,axis=1)+b
+    loss = tf.nn.l2_loss(model - y)
+
+    train = tf.train.AdamOptimizer(0.1).minimize(loss)
+    sess.run(tf.global_variables_initializer())
+    for i in range(1000):
+        sess.run(train, {x: input, y: output})
+    print(sess.run([w,b, model], {x: [[1,1,1]]}))
+
 sess = tf.Session()
 
 W = tf.Variable([.3], tf.float32)
