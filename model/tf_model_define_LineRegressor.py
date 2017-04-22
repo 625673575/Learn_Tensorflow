@@ -19,7 +19,8 @@ def model(features,labels,mode):
         return tf.contrib.learn.ModelFnOps(mode=mode,predictions=y,loss=loss,train_op=train)
 
 features=[tf.contrib.layers.real_valued_column("x",dimension=1)]
-estimator=tf.contrib.learn.LinearRegressor(feature_columns=features)
+#estimator=tf.contrib.learn.LinearRegressor(feature_columns=features)
+estimator=tf.contrib.learn.Estimator(model_fn=model)
 
 x=np.array([1.,2.,3.,4.])
 y=np.array([-1.,-2.,-3.,-4.])
