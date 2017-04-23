@@ -16,12 +16,13 @@ resize1 = tf.image.resize_images(image1, [512, 512], method=tf.image.ResizeMetho
 resize2 = tf.image.resize_images(mask0, [512, 512], method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
 
 # image process
-contrast = tf.image.adjust_contrast(resize0, 1)
-gamma = tf.image.adjust_gamma(contrast, 0.67, 0.5)
-hue = tf.image.adjust_hue(resize0, 0.1)
-saturate = tf.image.adjust_saturation(resize0, 0.5)
-brightness = tf.image.adjust_brightness(resize0, 100)
-crop = tf.image.crop_to_bounding_box(resize0, 32, 32, 64, 64)
+def tf_image_fn():
+    contrast = tf.image.adjust_contrast(resize0, 1)
+    gamma = tf.image.adjust_gamma(contrast, 0.67, 0.5)
+    hue = tf.image.adjust_hue(resize0, 0.1)
+    saturate = tf.image.adjust_saturation(resize0, 0.5)
+    brightness = tf.image.adjust_brightness(resize0, 100)
+    crop = tf.image.crop_to_bounding_box(resize0, 32, 32, 64, 64)
 
 
 # end process
@@ -100,12 +101,16 @@ def blur(image, stride, distribution, iter=1):
 def blur_test():
     ax1 = plt.subplot(121)
     plt.imshow(sess.run(resize0))
-    result1 = blur(resize0, 1, [0.05, 0.1, 0.2, 0.3, 0.2, 0.1, 0.05], 1)
-    result1 = blur(result1, 2, [0.05, 0.1, 0.2, 0.3, 0.2, 0.1, 0.05], 2)
-    result1 = blur(result1, 3, [0.05, 0.1, 0.2, 0.3, 0.2, 0.1, 0.05], 1)
-    result1 = blur(result1, 2, [0.05, 0.1, 0.2, 0.3, 0.2, 0.1, 0.05], 2)
-    result1 = blur(result1, 1, [0.05, 0.1, 0.2, 0.3, 0.2, 0.1, 0.05], 2)
-    result1 = sess.run(blur(result1, 1, [0.05, 0.1, 0.2, 0.3, 0.2, 0.1, 0.05], ))
+
+    begin = datetime.datetime.now()
+    with tf.device('/gpu:0'):
+        result1 = blur(resize0, 1, [0.05, 0.1, 0.2, 0.3, 0.2, 0.1, 0.05], 5)
+        result1 = blur(result1, 2, [0.05, 0.1, 0.2, 0.3, 0.2, 0.1, 0.05], 5)
+        result1 = blur(result1, 3, [0.05, 0.1, 0.2, 0.3, 0.2, 0.1, 0.05], 5)
+        result1 = blur(result1, 4, [0.05, 0.1, 0.2, 0.3, 0.2, 0.1, 0.05], 5)
+        result1 = sess.run(blur(result1, 1, [0.05, 0.1, 0.2, 0.3, 0.2, 0.1, 0.05],5 ))
+    end = datetime.datetime.now()
+    print('经过的时间：', (begin - end).microseconds)
     ax1 = plt.subplot(122)
     plt.imshow(result1)
     plt.show()
@@ -134,6 +139,7 @@ def blend_darker(image0, image1):
 #blur_test()
 #result=sess.run(blend_darker(resize0,resize1))
 begin=datetime.datetime.now()
+blur_test()
 with tf.device('/gpu:0'):
     result=sess.run(desaturate(resize0,0.2,0.59,0.21,way=0))
 end=datetime.datetime.now()
