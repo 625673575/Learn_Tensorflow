@@ -15,6 +15,7 @@ def main():
     with tf.device("/job:ps/task:0"):
         weights_1 = tf.Variable(tf.constant( [1,2,3,4],tf.float32))
         biases_1 = tf.Variable(tf.constant( [1,2,3,4],tf.float32))
+        sess.run(tf.global_variables_initializer())
 
     with tf.device("/job:ps/task:1"):
         weights_2 = tf.Variable(tf.constant( [5,6,7,8],tf.float32))
@@ -23,6 +24,7 @@ def main():
         layer_1 = tf.multiply(biases_1, weights_1)
         logits = tf.multiply(biases_2, weights_2)
 
-    print(sess.run(logits))
+    with tf.Session("grpc://192.168.0.4:2222") as sess:
+        print(sess.run(logits))
 
 main()
