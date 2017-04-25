@@ -9,7 +9,7 @@ import wave
 import numpy
 import numpy as np
 import librosa
-import matplotlib
+import scipy
 # try:
 #
 # except:

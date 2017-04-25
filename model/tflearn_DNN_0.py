@@ -54,7 +54,7 @@ model = tflearn.DNN(net)
 #model=tflearn.DNN.load(net,"model.ckpt")
 # Start training (apply gradient descent algorithm)
 callback=MonitorCallback()
-model.fit(data, labels, n_epoch=10, batch_size=16, show_metric=True,callbacks=[callback])
+model.fit(data, labels, n_epoch=10, batch_size=64, show_metric=True,callbacks=[callback])
 model.save("model.ckpt")
 # Let's create some data for DiCaprio and Winslet
 dicaprio = [3, 'Jack Dawson', 'male', 19, 0, 0, 'N/A', 5.0000]
