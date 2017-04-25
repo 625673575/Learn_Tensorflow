@@ -8,8 +8,9 @@ FLAGS = None
 
 def main():
     # In task 0:
-    cluster = tf.train.ClusterSpec({"ps": ["192.168.0.3:2222", "192.168.0.4:2223"]})
-    server = tf.train.Server(cluster, job_name="ps", task_index=0)
+    cluster = tf.train.ClusterSpec({"ps": ["192.168.0.3:2222", "192.168.0.4:2222"]})
+    server = tf.train.Server(cluster, job_name="ps", task_index=1)
+    server.join()
     sess = tf.Session(server.target)
     with tf.device("/job:ps/task:0"):
         weights_1 = tf.Variable(tf.constant( [1,2,3,4],tf.float32))
